@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback } from 'react';
+import LoginScreen from './App/screens/Login/LoginScreen';
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,17 +22,18 @@ export default function App() {
     if(fontloaded){
       await SplashScreen.hideAsync();
     }
-    },[fontloaded]);
+  },[fontloaded]);
 
     if(!fontloaded){
       return null;
     }  
 
+  
+
 
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={styles.container} onLayout={onLayoutrootView}>
+    <LoginScreen/>
     </View>
   );
 }
