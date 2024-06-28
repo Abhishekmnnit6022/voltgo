@@ -4,8 +4,30 @@ import colors from '../../../constants/colors'
 import { StatusBar } from 'expo-status-bar'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import { FontAwesome } from '@expo/vector-icons';
+import * as WebBrowser from 'expo-web-browser'
+import { useWarmUpBrowser } from './../../../hooks/warmUpBrowser';
+import { useOAuth } from '@clerk/clerk-expo'
 
+WebBrowser.maybeCompleteAuthSession();
 export default function LoginScreen() {
+    useWarmUpBrowser();
+    const {startOAuthFlow}=useOAuth({strategy:'oauth_google'})
+    const onPress=async()=>{
+        try{
+            const {createdSessionId,signIn ,signUp,setActive}=
+            await startOAuthFlow();
+
+            if(createdSessionId){
+                setActive({session:createdSessionId});
+            }
+            else{
+
+            }  
+    }
+    catch(error){
+        console.error("OAuth error",err);
+    }
+    }
   return (
   <SafeAreaView>
 
@@ -14,7 +36,7 @@ export default function LoginScreen() {
      <Image source={require('./../../../assets/images/car.png')} style={styles.image}></Image>
         <Text style={styles.heading}>Your ultimate EV Charging Station Finder App  </Text>
         <Text style={styles.content}>Find EV charging station near you,plan trip and so much more in just one click</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPress}>
         <View style={styles.box}>
         <FontAwesome name="google" size={33} color="black" />
             <Text style={{fontSize:20 ,marginLeft:10}}>Continue with Google</Text>

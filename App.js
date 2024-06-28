@@ -4,16 +4,33 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback } from 'react';
 import LoginScreen from './App/screens/Login/LoginScreen';
-
+import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-expo';
+import* as SecureStore from 'expo-secure-store';
 
 SplashScreen.preventAutoHideAsync();
+const tokenCache = {
+  getToken(key) {
+    try {
+      return SecureStore.getItemAsync(key);
+    } catch (err) {
+      return null;
+    }
+  },
+  saveToken(key, value) {
+    try {
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return null;
+    }
+  },
+};
 
 export default function App() {
   const[fontloaded]=useFonts({
     'Semibold':require('./assets/fonts/Outfit-SemiBold.ttf'),
     'Extrabold':require('./assets/fonts/Outfit-ExtraBold.ttf'),
     'Extralight':require('./assets/fonts/Outfit-ExtraLight.ttf'),
-     'Medium':require('./assets/fonts/Outfit-Medium.ttf'),
+     'medium':require('./assets/fonts/Outfit-Medium.ttf'),
      'Regular':require('./assets/fonts/Outfit-Regular.ttf'),
      'Thin':require('./assets/fonts/Outfit-Thin.ttf'),
   });
@@ -32,9 +49,20 @@ export default function App() {
 
 
   return (
+    <ClerkProvider 
+    tokenCache={tokenCache}
+    publishableKey={'pk_test_cHJlc2VudC1sZW9wYXJkLTgyLmNsZXJrLmFjY291bnRzLmRldiQ'}>
+     
     <View style={styles.container} onLayout={onLayoutrootView}>
-    <LoginScreen/>
+      <SignedIn>
+        <Text>You are SignedIn</Text>
+      </SignedIn>
+      <SignedOut>
+      <LoginScreen/>
+      </SignedOut>
+ 
     </View>
+    </ClerkProvider>
   );
 }
 
