@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen'
+import * as SplashScreen from 'expo-splash-screen';
 import { useCallback } from 'react';
 import LoginScreen from './App/screens/Login/LoginScreen';
 import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-expo';
-import* as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store';
+import { NavigationContainer } from '@react-navigation/native';
+import TabNavigation from './App/Navigation/TabNavigation';
 
 SplashScreen.preventAutoHideAsync();
 const tokenCache = {
@@ -26,42 +28,40 @@ const tokenCache = {
 };
 
 export default function App() {
-  const[fontloaded]=useFonts({
-    'Semibold':require('./assets/fonts/Outfit-SemiBold.ttf'),
-    'Extrabold':require('./assets/fonts/Outfit-ExtraBold.ttf'),
-    'Extralight':require('./assets/fonts/Outfit-ExtraLight.ttf'),
-     'medium':require('./assets/fonts/Outfit-Medium.ttf'),
-     'Regular':require('./assets/fonts/Outfit-Regular.ttf'),
-     'Thin':require('./assets/fonts/Outfit-Thin.ttf'),
+  const [fontsLoaded] = useFonts({
+    'SemiBold': require('./assets/fonts/Outfit-SemiBold.ttf'),
+    'ExtraBold': require('./assets/fonts/Outfit-ExtraBold.ttf'),
+    'ExtraLight': require('./assets/fonts/Outfit-ExtraLight.ttf'),
+    'Medium': require('./assets/fonts/Outfit-Medium.ttf'),
+    'Regular': require('./assets/fonts/Outfit-Regular.ttf'),
+    'Thin': require('./assets/fonts/Outfit-Thin.ttf'),
   });
 
-  const onLayoutrootView=useCallback(async()=>{
-    if(fontloaded){
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
-  },[fontloaded]);
+  }, [fontsLoaded]);
 
-    if(!fontloaded){
-      return null;
-    }  
-
-  
-
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <ClerkProvider 
-    tokenCache={tokenCache}
-    publishableKey={'pk_test_cHJlc2VudC1sZW9wYXJkLTgyLmNsZXJrLmFjY291bnRzLmRldiQ'}>
-     
-    <View style={styles.container} onLayout={onLayoutrootView}>
-      <SignedIn>
-        <Text>You are SignedIn</Text>
-      </SignedIn>
-      <SignedOut>
-      <LoginScreen/>
-      </SignedOut>
- 
-    </View>
+      tokenCache={tokenCache}
+      publishableKey={'pk_test_cHJlc2VudC1sZW9wYXJkLTgyLmNsZXJrLmFjY291bnRzLmRldiQ'}
+    >
+      <NavigationContainer>
+        <View style={styles.container} onLayout={onLayoutRootView}>
+          <SignedIn>
+            <TabNavigation />
+          </SignedIn>
+          <SignedOut>
+            <LoginScreen />
+          </SignedOut>
+        </View>
+      </NavigationContainer>
     </ClerkProvider>
   );
 }
@@ -70,7 +70,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
